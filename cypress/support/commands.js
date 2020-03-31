@@ -24,8 +24,6 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-import { basePage } from "../pageobjects/base.page";
-
 Cypress.Commands.add("getDemoForm", () => { 
     cy.visit('free.test.io');
 })
