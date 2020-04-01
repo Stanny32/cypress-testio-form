@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
-import { demoForm } from "../../pageobjects/demo.form"
+import { demoForm } from "../../pageobjects/demo.form";
+import * as inputs from "../../test-data/inputs.json";
 
 context('Submitting form ', () => {
 
@@ -16,11 +17,9 @@ context('Submitting form ', () => {
   })
 
   it('with no last name', () => {
-    const data = {
-      firstName: "John",
-    }
+    const data = { ...inputs, lastName: ''};
 
-    demoForm.inputTheFields(data)
+    demoForm.inputTheFields(data);
     demoForm.trySubmitForm();
     demoForm.$lastName.should('have.length', 1).then(($input) => {
       expect($input[0].validationMessage).to.eq('This field is required.')
@@ -28,29 +27,19 @@ context('Submitting form ', () => {
   })
 
   it('with invalid email', () => {
-    const data = {
-      firstName: "John",
-      lastName: "Lemon",
-      company: "The Bugels",
-      email: "j@.",
-    }
+    const data = { ...inputs, email: 'j@.'};
 
-    demoForm.inputTheFields(data)
+    demoForm.inputTheFields(data);
     demoForm.trySubmitForm();
     demoForm.$email.should('have.length', 1).then(($input) => {
-      expect($input[0].validationMessage).to.eq('Please enter a valid email address.')
+      expect($input[0].validationMessage).to.eq('Please enter a valid email address.');
     })
   })
 
   it('with non-corporate email', () => {
-    const data = {
-      firstName: "John",
-      lastName: "Lemon",
-      company: "The Bugels",
-      email: "stanny32@gmail.com",
-    }
+    const data = { ...inputs, email: 'stanny32@gmail.com'};
 
-    demoForm.inputTheFields(data)
+    demoForm.inputTheFields(data);
     demoForm.trySubmitForm();
     demoForm.$email.should('have.length', 1).then(($input) => {
       expect($input[0].validationMessage).to.eq('Please enter your work email address.')
@@ -58,15 +47,9 @@ context('Submitting form ', () => {
   })
 
   it('with invalid phone', () => {
-    const data = {
-      firstName: "John",
-      lastName: "Lemon",
-      company: "The Bugels",
-      phone: "911",
-      email: "john.lemon@epam.com",
-    }
+    const data = { ...inputs, phone: '911'};;
 
-    demoForm.inputTheFields(data)
+    demoForm.inputTheFields(data);
     demoForm.trySubmitForm();
     demoForm.$email.should('have.length', 1).then(($input) => {
       expect($input[0].validationMessage).to.eq('Please enter valid phone number')
@@ -74,16 +57,9 @@ context('Submitting form ', () => {
   })
 
   it('with executable code in textarea', () => {
-    const data = {
-      firstName: "John",
-      lastName: "Lemon",
-      company: "The Bugels",
-      phone: "0600235189",
-      email: "john.lemon@epam.com",
-      message: "<script>alert('ooops')</script>"
-    }
+    const data = { ...inputs, message: '<script>alert("ooops")</script>'};
 
-    demoForm.inputTheFields(data)
+    demoForm.inputTheFields(data);
     demoForm.trySubmitForm();
     demoForm.$message.should('have.length', 1).then(($input) => {
       expect($input[0].validationMessage).to.eq('unknown expected result')
@@ -94,20 +70,12 @@ context('Submitting form ', () => {
   })
 
   it('with valid inputs (positive)', () => {
-    const data = {
-      firstName: "John",
-      lastName: "Lemon",
-      company: "The Bugels",
-      phone: "0600235189",
-      email: "john.lemon@epam.com",
-      message: "This is a message"
-    }
-
+    const data = inputs;
+    
     demoForm.inputTheFields(data)
     demoForm.trySubmitForm();
     cy.url().should(url => {
       expect(url).to.eq('https://test.io/thank-you/')
     })
-
   })
 })
